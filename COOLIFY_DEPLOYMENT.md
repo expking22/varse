@@ -51,6 +51,7 @@ Create the Coolify owner account.
 ```text
 ADMIN_USERNAME=your-admin-username
 ADMIN_PASSWORD=your-secure-admin-password
+SPLAX_DATA_DIR=/data
 ```
 
 8. Deploy.

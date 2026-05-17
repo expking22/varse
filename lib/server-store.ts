@@ -5,7 +5,7 @@ import path from "node:path";
 import { products, type Product } from "@/lib/products";
 import { defaultSiteSettings, type SiteSettings, type StoredOrder } from "@/lib/local-store";
 
-const dataDir = path.join("/tmp", "splax-data");
+const dataDir = process.env.SPLAX_DATA_DIR || path.join("/tmp", "splax-data");
 const ordersFile = path.join(dataDir, "orders.json");
 const productsFile = path.join(dataDir, "products.json");
 const settingsFile = path.join(dataDir, "settings.json");
