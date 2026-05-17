@@ -8,7 +8,7 @@ import { AddToCartButton } from "@/components/products/add-to-cart-button";
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const discount = Math.round(((product.compareAt - product.price) / product.compareAt) * 100);
-  const productHref = product.id.startsWith("admin-") ? "/products" : `/product/${product.id}`;
+  const productHref = `/product/${product.id}`;
 
   return (
     <article className="group overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] transition hover:-translate-y-1 hover:shadow-xl">
@@ -45,6 +45,9 @@ export function ProductCard({ product, priority = false }: { product: Product; p
               <span className="text-xl font-black">{formatPrice(product.price)}</span>
               <span className="text-sm text-[var(--muted)] line-through">{formatPrice(product.compareAt)}</span>
             </div>
+            <p className="mt-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              Delivery charge: Free
+            </p>
             <div className="mt-1 flex items-center gap-1 text-sm text-[var(--muted)]">
               <Star size={15} className="fill-yellow-400 text-yellow-400" />
               <span className="font-bold text-[var(--foreground)]">{product.rating}</span>

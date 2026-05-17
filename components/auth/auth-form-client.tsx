@@ -2,7 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LockKeyhole, Mail, UserRound } from "lucide-react";
+import { LockKeyhole, Mail, Phone, UserRound } from "lucide-react";
+import { saveCustomer } from "@/lib/local-store";
 
 type Mode = "signin" | "signup";
 
@@ -11,19 +12,18 @@ export function AuthFormClient() {
   const [mode, setMode] = useState<Mode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const displayName = name.trim() || email.split("@")[0] || "SPLAX Shopper";
-    window.localStorage.setItem(
-      "splax-user",
-      JSON.stringify({
-        name: displayName,
-        email,
-        signedInAt: new Date().toISOString()
-      })
-    );
+    const displayName = name.trim() || email.split("@")[0] || phone || "SPLAX Shopper";
+    saveCustomer({
+      name: displayName,
+      email: email.trim() || undefined,
+      phone: phone.trim() || undefined,
+      signedInAt: new Date().toISOString()
+    });
     router.push("/dashboard");
   }
 
@@ -83,11 +83,26 @@ export function AuthFormClient() {
             <input
               type="email"
               name="email"
-              required
+              required={mode === "signin" && !phone}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               className="w-full bg-transparent outline-none"
-              placeholder="you@example.com"
+              placeholder={mode === "signup" ? "you@example.com (optional)" : "you@example.com"}
+            />
+          </div>
+        </label>
+
+        <label>
+          <span className="text-sm font-bold">Phone number</span>
+          <div className="mt-2 flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--background)] px-4 py-3">
+            <Phone size={18} className="text-[var(--muted)]" />
+            <input
+              name="phone"
+              required={!email}
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              className="w-full bg-transparent outline-none"
+              placeholder="+880 1XXXXXXXXX"
             />
           </div>
         </label>
@@ -113,6 +128,9 @@ export function AuthFormClient() {
         >
           {mode === "signin" ? "Sign in securely" : "Create account"}
         </button>
+        <p className="text-xs leading-5 text-[var(--muted)]">
+          Use either email or phone. Your session stays signed in on this browser until you sign out.
+        </p>
       </form>
     </section>
   );

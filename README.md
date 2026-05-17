@@ -1,6 +1,6 @@
-# MarketPro Ecommerce Website
+# SPLAX Vercel Marketplace
 
-A production-ready Next.js App Router ecommerce marketplace UI with Tailwind CSS, dark mode persistence, cart state, SEO metadata, responsive product flows, and CRO-oriented sections.
+A Next.js ecommerce marketplace prepared for Vercel hosting, with customer shopping flows, cart/checkout, admin dashboard protection, product management, social links, and searchable product pages.
 
 ## Run locally
 
@@ -11,13 +11,16 @@ npm run dev
 
 Then open `http://localhost:3000`.
 
-## Professional URLs
+## Deployment
 
-- Local website: `http://localhost:3000`
-- Customer dashboard: `http://localhost:3000/dashboard`
-- Sign in / create account: `http://localhost:3000/auth`
-- Order checkout: `http://localhost:3000/checkout`
-- Production domain configured in the app: `https://splax.github.io`
+Deploy on Vercel by importing this GitHub repository as a Next.js project. Add these environment variables in Vercel before production use:
+
+```text
+ADMIN_USERNAME=your-admin-username
+ADMIN_PASSWORD=your-secure-admin-password
+```
+
+See `VERCEL_DEPLOYMENT.md` for the full deployment checklist.
 
 ## Pages
 
@@ -28,3 +31,4 @@ Then open `http://localhost:3000`.
 - `/checkout` checkout UI
 - `/account` account dashboard UI
 - `/auth` login/signup UI
+- `/admin` protected admin dashboard

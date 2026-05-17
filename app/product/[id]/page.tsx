@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { CheckCircle2, ShieldCheck, Star, Truck } from "lucide-react";
 import { AddToCartButton, BuyNowButton } from "@/components/products/add-to-cart-button";
 import { ProductCard } from "@/components/products/product-card";
-import { formatPrice, getProduct, products } from "@/lib/products";
+import { formatPrice, products } from "@/lib/products";
+import { getAllServerProducts, getServerProduct } from "@/lib/server-store";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,12 +13,12 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getServerProduct(id);
 
   if (!product) {
     return {
-      title: "Product not found",
-      description: "The requested product could not be found."
+      title: "Product details",
+      description: "View product details, pricing, delivery, and checkout options."
     };
   }
 
@@ -39,13 +39,26 @@ export function generateStaticParams() {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getServerProduct(id);
 
   if (!product) {
-    notFound();
+    return (
+      <div className="container-page py-16">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
+          <h1 className="text-4xl font-black">Product details are not available here yet</h1>
+          <p className="mx-auto mt-3 max-w-xl leading-7 text-[var(--muted)]">
+            If this was an owner-added product on Vercel, open the products page from the same browser where it was added. For permanent cross-device products, connect a database.
+          </p>
+          <Link href="/products" className="mt-6 inline-flex rounded-full bg-[#202940] px-6 py-3 font-black text-white">
+            Back to products
+          </Link>
+        </div>
+      </div>
+    );
   }
 
-  const related = products
+  const allProducts = await getAllServerProducts();
+  const related = allProducts
     .filter((item) => item.id !== product.id && item.category !== product.category)
     .slice(0, 3);
 
@@ -98,6 +111,9 @@ export default async function ProductDetailPage({ params }: Props) {
               <span className="text-4xl font-black">{formatPrice(product.price)}</span>
               <span className="text-lg text-[var(--muted)] line-through">{formatPrice(product.compareAt)}</span>
             </div>
+            <p className="mt-2 text-sm font-black text-emerald-700 dark:text-emerald-300">
+              Real price: {formatPrice(product.compareAt)} - Discount price: {formatPrice(product.price)} - Delivery charge: Free
+            </p>
             <p className="mt-4 leading-7 text-[var(--muted)]">{product.description}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
               {[

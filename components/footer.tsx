@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { CreditCard, RotateCcw, ShieldCheck, Truck } from "lucide-react";
+import { FacebookIcon, GmailIcon, InstagramIcon, MessengerIcon, WhatsAppIcon } from "@/components/social-brand-icons";
+import { defaultSiteSettings, getSiteSettings, type SiteSettings } from "@/lib/local-store";
 
 const trustItems = [
   { icon: ShieldCheck, label: "Verified sellers" },
@@ -10,6 +15,38 @@ const trustItems = [
 ];
 
 export function Footer() {
+  const [settings, setSettings] = useState<SiteSettings>(defaultSiteSettings);
+
+  useEffect(() => {
+    const syncSettings = async () => {
+      try {
+        const response = await fetch("/api/settings", { cache: "no-store" });
+        if (response.ok) {
+          setSettings(await response.json());
+          return;
+        }
+      } catch {
+        // Fallback below.
+      }
+      setSettings(getSiteSettings());
+    };
+    syncSettings();
+    window.addEventListener("storage", syncSettings);
+    window.addEventListener("splax-storage", syncSettings);
+    return () => {
+      window.removeEventListener("storage", syncSettings);
+      window.removeEventListener("splax-storage", syncSettings);
+    };
+  }, []);
+
+  const socials = [
+    ["Facebook", settings.footerSocials.facebook, FacebookIcon],
+    ["Messenger", settings.footerSocials.messenger, MessengerIcon],
+    ["Instagram", settings.footerSocials.instagram, InstagramIcon],
+    ["WhatsApp", settings.footerSocials.whatsapp, WhatsAppIcon],
+    ["Gmail", settings.footerSocials.gmail, GmailIcon]
+  ] as const;
+
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
       <div className="container-page py-10">
@@ -34,6 +71,23 @@ export function Footer() {
             <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--muted)]">
               A premium ecommerce marketplace for trusted deals, quick discovery, and confident checkout.
             </p>
+          </div>
+          <div>
+            <h2 className="text-sm font-black uppercase tracking-wide">Social</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {socials.map(([label, href, Icon]) => (
+                <Link
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring grid h-10 w-10 place-items-center rounded-full border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] transition hover:-translate-y-0.5"
+                  aria-label={label}
+                >
+                  <Icon className="h-5 w-5" />
+                </Link>
+              ))}
+            </div>
           </div>
           {[
             ["Shop", "Electronics", "Fashion", "Home", "Best sellers"],

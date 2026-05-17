@@ -24,7 +24,23 @@ const storageKey = "splax-cart";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>(products);
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        const response = await fetch("/api/products", { cache: "no-store" });
+        if (response.ok) {
+          setAllProducts(await response.json());
+        }
+      } catch {
+        setAllProducts(products);
+      }
+    }
+
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(storageKey);
@@ -49,10 +65,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       items
         .map((item) => ({
           ...item,
-          product: products.find((product) => product.id === item.productId)
+          product: allProducts.find((product) => product.id === item.productId)
         }))
         .filter((item): item is CartItem & { product: Product } => Boolean(item.product)),
-    [items]
+    [allProducts, items]
   );
 
   const value = useMemo<CartContextValue>(() => {

@@ -22,8 +22,14 @@ export default function OrderSuccessPage() {
           Thank you for shopping with SPLAX. Your order details were sent to {siteConfig.supportEmail}, and the team can now confirm availability, payment, and delivery.
         </p>
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+          <Link href="/" className="rounded-full bg-[#202940] px-6 py-3 font-black text-white">
+            Back to Home
+          </Link>
+          <Link href="/cart" className="rounded-full border border-[var(--border)] px-6 py-3 font-black">
+            Return to Cart
+          </Link>
           <Link href="/dashboard" className="rounded-full bg-[#202940] px-6 py-3 font-black text-white">
-            Open dashboard
+            View Orders
           </Link>
           <Link href="/products" className="rounded-full border border-[var(--border)] px-6 py-3 font-black">
             Continue shopping
